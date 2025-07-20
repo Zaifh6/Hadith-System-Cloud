@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Narrator: {{ name }}</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Narrator Details</h1>
+        <div class="search-container">
+            <form action="{{ url_for('search_hadith', lang=lang) }}" method="get">
+                <input type="text" name="hadith_id" placeholder="Search by Hadith ID...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div style="margin-right: 20px;">
+            {% if lang == 'ar' %}
+                <a href="{{ url_for(request.endpoint, narrator_id=id, lang='en') }}" class="nav-link">English</a>
+            {% else %}
+                <a href="{{ url_for(request.endpoint, narrator_id=id, lang='ar') }}" class="nav-link">العربية</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        <section class="narrator-details">
+            <h2>{{ name }}</h2>
+            <div class="narrator-info">
+                <div class="info-item">
+                    <span class="label">ID:</span>
+                    <span class="value">{{ id }}</span>
+                </div>
+                {% if reliability %}
+                <div class="info-item">
+                    <span class="label">Reliability:</span>
+                    <span class="value">{{ reliability }}</span>
+                </div>
+                {% endif %}
+                {% if patronymic %}
+                <div class="info-item">
+                    <span class="label">Patronymic:</span>
+                    <span class="value">{{ patronymic }}</span>
+                </div>
+                {% endif %}
+                {% if sect %}
+                <div class="info-item">
+                    <span class="label">Sect:</span>
+                    <span class="value">{{ sect }}</span>
+                </div>
+                {% endif %}
+                {% if titles %}
+                <div class="info-item">
+                    <span class="label">Titles:</span>
+                    <span class="value">{{ titles }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        {% if death_records %}
+        <section class="death-records">
+            <h3>Death Records</h3>
+            <ul>
+                {% for record in death_records %}
+                <li>
+                    <div class="death-record">
+                        <div class="death-year">{{ record.death_year }}</div>
+                        <div class="source">Source: {{ record.source }}</div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if evaluations %}
+        <section class="evaluations">
+            <h3>Evaluations</h3>
+            <ul>
+                {% for eval in evaluations %}
+                <li>
+                    <div class="evaluation">
+                        <div class="evaluation-text">{{ eval.evaluation }}</div>
+                        <div class="source">Source: {{ eval.source }}</div>
+                        {% if eval.summary %}
+                        <div class="summary">Summary: {{ eval.summary }}</div>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        <div class="back-link">
+            <a href="{{ url_for('index') }}">Back to Home</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Hadith System Interface</p>
+    </footer>
+</body>
+</html> 

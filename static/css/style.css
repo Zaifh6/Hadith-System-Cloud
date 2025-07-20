@@ -1,0 +1,738 @@
+/* Base Styles and Typography */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e67e22;
+    --light-color: #ecf0f1;
+    --dark-color: #34495e;
+    --success-color: #2ecc71;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --border-radius: 6px;
+    --transition-speed: 0.3s;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Naskh Arabic', 'Amiri', serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+    background-color: #f5f5f5;
+    direction: rtl;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    color: var(--primary-color);
+}
+
+a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
+/* Header and Navigation */
+header {
+    background-color: var(--primary-color);
+    padding: 15px 0;
+    box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    margin-right: 20px;
+}
+
+.nav-links li:last-child {
+    margin-right: 0;
+}
+
+.nav-links a {
+    color: var(--light-color);
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-speed);
+}
+
+.nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.nav-links a i {
+    margin-left: 5px;
+}
+
+/* Main Content Section */
+main {
+    padding: 30px 0;
+    min-height: calc(100vh - 140px);
+}
+
+/* Hadith Container */
+.hadith-container {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.hadith-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.hadith-header h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: white;
+}
+
+.hadith-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-speed);
+}
+
+.action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.hadith-content {
+    padding: 25px;
+    border-bottom: 1px solid #eee;
+}
+
+.hadith-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    color: var(--dark-color);
+}
+
+.hadith-grade {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.grade-label {
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.grade-value {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.grade-value.sahih {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.grade-value.hasan {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.grade-value.daif {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.grade-value.mawdoo {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Sanad Section */
+.sanad-section {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.sanad-section h2 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.sanad-chain {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px 0;
+}
+
+.sanad-card {
+    display: flex;
+    align-items: center;
+    background-color: var(--light-color);
+    padding: 12px 15px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: transform var(--transition-speed);
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s forwards;
+}
+
+.sanad-card:hover {
+    transform: translateY(-5px);
+}
+
+.sanad-card .sanad-arrow {
+    margin-left: 10px;
+    color: var(--dark-color);
+}
+
+.narrator-link {
+    color: var(--dark-color);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+
+.narrator-link:hover {
+    color: var(--secondary-color);
+}
+
+/* References Section */
+.references-section {
+    padding: 20px;
+}
+
+.references-section h2 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.tabs-container {
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.tabs {
+    display: flex;
+    background-color: #dfe6e9;
+    border-bottom: 1px solid #ccc;
+}
+
+.reference-tab {
+    padding: 10px 15px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    color: var(--dark-color);
+    font-weight: 500;
+    transition: background-color var(--transition-speed);
+}
+
+.reference-tab:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.reference-tab.active {
+    background-color: white;
+    color: var(--secondary-color);
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+.tab-contents {
+    padding: 20px;
+}
+
+.reference-content {
+    display: none;
+}
+
+.reference-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.reference-info {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.reference-info p {
+    margin-bottom: 8px;
+}
+
+.reference-text {
+    line-height: 1.7;
+}
+
+/* Footer */
+footer {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.footer-links a {
+    color: var(--light-color);
+    margin-right: 15px;
+    transition: color var(--transition-speed);
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity var(--transition-speed);
+}
+
+.modal.show {
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 80%;
+    max-width: 700px;
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: all var(--transition-speed);
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.close-modal {
+    color: #aaa;
+    float: left;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color var(--transition-speed);
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+/* Modal Tabs */
+.modal-tabs {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.modal-tab {
+    padding: 10px 20px;
+    margin: 0 5px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--dark-color);
+    position: relative;
+    transition: color var(--transition-speed);
+}
+
+.modal-tab:hover {
+    color: var(--secondary-color);
+}
+
+.modal-tab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--secondary-color);
+    transform: scaleX(0);
+    transition: transform var(--transition-speed);
+}
+
+.modal-tab.active {
+    color: var(--secondary-color);
+}
+
+.modal-tab.active::after {
+    transform: scaleX(1);
+}
+
+.modal-tab-content {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all var(--transition-speed);
+}
+
+.modal-tab-content.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Bio Tab Styles */
+.bio-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.bio-table th,
+.bio-table td {
+    padding: 12px;
+    text-align: right;
+    border-bottom: 1px solid #eee;
+}
+
+.bio-table th {
+    width: 25%;
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+/* Jarh & Ta'deel Tab Styles */
+.jarh-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.jarh-item {
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.jarh-source {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.jarh-source i {
+    margin-left: 8px;
+}
+
+.jarh-text {
+    font-style: italic;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.jarh-summary {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Skills Tab Styles */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.skill-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.skill-name {
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.skill-bar {
+    height: 10px;
+    background-color: #eee;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+.skill-level {
+    height: 100%;
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    transform: scaleX(0);
+    transform-origin: right;
+    animation: fillSkillBar 1s forwards;
+}
+
+.skill-rating {
+    font-size: 0.9rem;
+    text-align: left;
+    color: #666;
+}
+
+.masters-students {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.masters h4,
+.students h4 {
+    margin-bottom: 10px;
+    color: var(--dark-color);
+    display: flex;
+    align-items: center;
+}
+
+.masters h4 i,
+.students h4 i {
+    margin-left: 8px;
+}
+
+.narrator-list {
+    list-style: none;
+}
+
+.narrator-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.narrator-list li:last-child {
+    border-bottom: none;
+}
+
+/* Toast Notifications */
+.toast {
+    visibility: hidden;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--dark-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    z-index: 9999;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    min-width: 250px;
+}
+
+.toast.show {
+    visibility: visible;
+    animation: fadeInUp 0.3s, fadeOut 0.5s 2.5s;
+}
+
+/* QR Code Modal */
+#qrModal {
+    background-color: white;
+    padding: 25px;
+    text-align: center;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+#qrCode {
+    margin: 20px auto;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fillSkillBar {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+/* Page Transitions */
+.page-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--primary-color);
+    z-index: 9999;
+    transform: translateY(100%);
+    transition: transform 0.5s ease-in-out;
+}
+
+.page-transition.enter {
+    transform: translateY(0);
+}
+
+.page-transition.exit {
+    transform: translateY(-100%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hadith-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .hadith-actions {
+        margin-top: 10px;
+        align-self: flex-end;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+    }
+    
+    .skills-grid,
+    .masters-students {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .jarh-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .reference-tab {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Right-to-left specific adjustments */
+.sanad-card .sanad-arrow i {
+    transform: rotate(180deg);
+} 
