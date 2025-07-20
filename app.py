@@ -218,6 +218,13 @@ def get_hadith_with_details(hadith_id, conn, lang='ar'):
     except Exception as e:
         logger.error(f"Error processing references: {str(e)}")
     
+    # Check if reference hadith exists
+    for ref in reference_entries:
+        check_ref_query = text(f"SELECT 1 FROM {prefix}hadith WHERE hadith_id = :ref_id LIMIT 1")
+        exists = conn.execute(check_ref_query, {"ref_id": ref["hadithId"]}).scalar()
+        if not exists:
+            ref["hadithId"] = None
+    
     # Get translation if available
     translation_query = text(f"""
         SELECT id, translation 
@@ -251,6 +258,12 @@ def get_hadith_with_details(hadith_id, conn, lang='ar'):
     related_hadiths_count = 0
     same_topic_hadiths_count = 0
     
+    # Get next and previous hadith_id
+    next_query = text(f"SELECT hadith_id FROM {prefix}hadith WHERE hadith_id > :hadith_id ORDER BY hadith_id ASC LIMIT 1")
+    prev_query = text(f"SELECT hadith_id FROM {prefix}hadith WHERE hadith_id < :hadith_id ORDER BY hadith_id DESC LIMIT 1")
+    next_hadith_id = conn.execute(next_query, {"hadith_id": hadith_id}).scalar()
+    previous_hadith_id = conn.execute(prev_query, {"hadith_id": hadith_id}).scalar()
+    
     return {
         "hadith_id": hadith_id,
         "hadith_content": hadith_content,
@@ -271,7 +284,9 @@ def get_hadith_with_details(hadith_id, conn, lang='ar'):
         "explanation_count": explanation_count,
         "explanation_text": explanation_text,
         "sanad_entries": all_sanad_entries,
-        "reference_entries": reference_entries
+        "reference_entries": reference_entries,
+        "next_hadith_id": next_hadith_id,
+        "previous_hadith_id": previous_hadith_id
     }
 
 @app.route('/')
@@ -395,77 +410,69 @@ def get_hadith_api(hadith_id):
 
 @app.route('/api/narrator/<narrator_id>')
 def get_narrator_details(narrator_id):
+    hadith_id = request.args.get('hadith_id')
+    # Use lang from query string, fallback to get_table_prefix
+    lang = request.args.get('lang')
+    if lang not in ['ar', 'en']:
+        _, lang = get_table_prefix()
+    prefix = f"{lang}_"
     try:
         with engine.connect() as conn:
-            prefix, lang = get_table_prefix()
-            logger.info(f"Fetching narrator {narrator_id} with prefix: {prefix}, lang: {lang}")
-            
-            # Get narrator details
-            query = text(f"""
-                SELECT 
-                    n.id,
-                    n.name,
-                    nd.reliability,
-                    nd.titles,
-                    nd.patronymic,
-                    nd.sect
+            # If hadith_id is provided, use it to fetch the correct narrator context
+            if hadith_id:
+                # Get all narrators for this hadith (in the correct language table)
+                narrators_query = text(f'''
+                    SELECT 
+                        h.hadith_id,
+                        n.id AS narrator_id,
+                        n.name AS narrator_name
+                    FROM {prefix}hadith h
+                    JOIN {prefix}hadith_sanads s ON h.uuid = s.hadith_id
+                    JOIN {prefix}hadith_narrator_chain nc ON s.id = nc.sanad_id
+                    JOIN {prefix}narrators n ON nc.narrator_id = n.id
+                    WHERE h.hadith_id = :hadith_id
+                    ORDER BY s.sanad_number, nc.position
+                ''')
+                narrators = conn.execute(narrators_query, {"hadith_id": hadith_id}).fetchall()
+                # Find the narrator in the list
+                narrator_row = next((row for row in narrators if str(row.narrator_id) == str(narrator_id)), None)
+                if not narrator_row:
+                    return jsonify({"error": "Narrator not found for this hadith"}), 404
+            # Get details (in the correct language table)
+            details_query = text(f'''
+                SELECT n.id, n.name, nd.reliability, nd.titles, nd.patronymic, nd.sect
                 FROM {prefix}narrators n
                 LEFT JOIN {prefix}narrator_details nd ON n.id = nd.narrator_id
                 WHERE n.id = :narrator_id
-            """)
-            
-            result = conn.execute(query, {"narrator_id": narrator_id}).fetchone()
-            
-            if not result:
-                return jsonify({"error": "Narrator not found"}), 404
-            
-            # Get death records
-            death_query = text(f"""
-                SELECT 
-                    source,
-                    death_year
-                FROM {prefix}narrator_death_records
-                WHERE narrator_id = :narrator_id
-            """)
-            
-            death_records = conn.execute(death_query, {"narrator_id": narrator_id}).fetchall()
-            
-            # Get evaluations
-            evaluation_query = text(f"""
-                SELECT 
-                    source,
-                    evaluation,
-                    summary
-                FROM {prefix}narrator_evaluation
-                WHERE narrator_id = :narrator_id
-            """)
-            
+            ''')
+            details_result = conn.execute(details_query, {"narrator_id": narrator_id}).fetchone()
+            # Get evaluations (in the correct language table)
+            evaluation_query = text(f'''
+                SELECT ev.source, ev.evaluation, ev.summary
+                FROM {prefix}narrator_evaluation ev
+                WHERE ev.narrator_id = :narrator_id
+            ''')
             evaluations = conn.execute(evaluation_query, {"narrator_id": narrator_id}).fetchall()
-            
-            logger.info(f"Found {len(evaluations)} evaluations for narrator {narrator_id}")
-            for i, eval in enumerate(evaluations):
-                logger.info(f"Evaluation {i+1}: source='{eval.source}', evaluation='{eval.evaluation}', summary='{eval.summary}'")
-            
-            # Check if we need to get English translations from a different source
-            # For now, let's see if the evaluation content is actually different between languages
-            # If both tables contain the same Arabic content, we might need to handle this differently
-            
-            # Format response
-            narrator_details = {
-                "id": result.id,
-                "name": result.name,
-                "reliability": result.reliability or "",
-                "titles": result.titles or "",
-                "patronymic": result.patronymic or "",
-                "sect": result.sect or "",
+            # Get death records (in the correct language table)
+            death_query = text(f'''
+                SELECT dr.source, dr.death_year
+                FROM {prefix}narrator_death_records dr
+                WHERE dr.narrator_id = :narrator_id
+            ''')
+            death_records = conn.execute(death_query, {"narrator_id": narrator_id}).fetchall()
+            return jsonify({
+                "details": {
+                    "id": details_result.id if details_result else narrator_id,
+                    "name": details_result.name if details_result else '',
+                    "reliability": details_result.reliability if details_result else '',
+                    "titles": details_result.titles if details_result else '',
+                    "patronymic": details_result.patronymic if details_result else '',
+                    "sect": details_result.sect if details_result else ''
+                },
                 "death_records": [{"source": r.source, "death_year": r.death_year} for r in death_records],
                 "evaluations": [{"source": r.source, "evaluation": r.evaluation, "summary": r.summary} for r in evaluations],
-                "lang": lang,  # Add language info for debugging
-                "table_prefix": prefix  # Add table prefix for debugging
-            }
-            
-            return jsonify(narrator_details)
-            
+                "lang": lang
+            })
     except SQLAlchemyError as e:
         logger.error(f"API database error: {str(e)}")
         return jsonify({"error": f"Database error: {str(e)}"}), 500
