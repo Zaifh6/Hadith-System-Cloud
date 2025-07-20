@@ -546,4 +546,4 @@ def show_narrator(narrator_id):
     return render_template('narrator.html', **narrator_data, lang=lang)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 8080)))
