@@ -420,7 +420,6 @@ def get_narrator_details(narrator_id):
         with engine.connect() as conn:
             # If hadith_id is provided, use it to fetch the correct narrator context
             if hadith_id:
-                # Get all narrators for this hadith (in the correct language table)
                 narrators_query = text(f'''
                     SELECT 
                         h.hadith_id,
@@ -434,13 +433,12 @@ def get_narrator_details(narrator_id):
                     ORDER BY s.sanad_number, nc.position
                 ''')
                 narrators = conn.execute(narrators_query, {"hadith_id": hadith_id}).fetchall()
-                # Find the narrator in the list
                 narrator_row = next((row for row in narrators if str(row.narrator_id) == str(narrator_id)), None)
                 if not narrator_row:
                     return jsonify({"error": "Narrator not found for this hadith"}), 404
-            # Get details (in the correct language table)
+            # Get details (include narrator_tabaqa)
             details_query = text(f'''
-                SELECT n.id, n.name, nd.reliability, nd.titles, nd.patronymic, nd.sect
+                SELECT n.id, n.name, nd.reliability, nd.titles, nd.patronymic, nd.sect, nd.narrator_tabaqa
                 FROM {prefix}narrators n
                 LEFT JOIN {prefix}narrator_details nd ON n.id = nd.narrator_id
                 WHERE n.id = :narrator_id
@@ -467,7 +465,8 @@ def get_narrator_details(narrator_id):
                     "reliability": details_result.reliability if details_result else '',
                     "titles": details_result.titles if details_result else '',
                     "patronymic": details_result.patronymic if details_result else '',
-                    "sect": details_result.sect if details_result else ''
+                    "sect": details_result.sect if details_result else '',
+                    "narrator_tabaqa": details_result.narrator_tabaqa if details_result and hasattr(details_result, 'narrator_tabaqa') else ''
                 },
                 "death_records": [{"source": r.source, "death_year": r.death_year} for r in death_records],
                 "evaluations": [{"source": r.source, "evaluation": r.evaluation, "summary": r.summary} for r in evaluations],

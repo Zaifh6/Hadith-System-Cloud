@@ -22,13 +22,13 @@
             min-height: 100vh;
             font-size: 15px;
             color: var(--text);
-            font-family: 'Noto Naskh Arabic', 'Amiri', 'Merriweather', serif;
+            font-family: 'Noto Sans Arabic', 'Noto Naskh Arabic', 'Amiri', 'Merriweather', 'Inter', Arial, sans-serif;
         }
         body.ltr {
-            font-family: 'Merriweather', 'Georgia', serif;
+            font-family: 'Inter', Arial, sans-serif;
         }
         body.rtl {
-            font-family: 'Noto Naskh Arabic', 'Amiri', serif;
+            font-family: 'Noto Sans Arabic', 'Noto Naskh Arabic', 'Amiri', Arial, sans-serif;
         }
         .header {
             background: var(--primary);
@@ -178,34 +178,33 @@
         }
         .search-form input {
             padding: 7px 10px;
-            border: 1.5px solid var(--accent);
-            border-radius: 5px 0 0 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
             direction: {{ 'ltr' if lang == 'en' else 'rtl' }};
             font-family: inherit;
-            font-size: 0.97rem;
+            font-size: 1rem;
             background: #fff;
             color: var(--primary);
             outline: none;
             transition: border 0.2s;
         }
         .search-form input:focus {
-            border: 1.5px solid var(--primary);
+            border: 1px solid var(--accent);
         }
         .search-btn {
-            padding: 7px 10px;
-            background-color: var(--accent);
+            border-radius: 0 4px 4px 0;
+            background: var(--accent);
             color: #fff;
-            border: 1.5px solid var(--accent);
-            border-radius: 0 5px 5px 0;
+            border: none;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 0.97rem;
-            transition: background 0.2s, color 0.2s, border 0.2s;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 7px 16px;
+            transition: background 0.2s, color 0.2s;
         }
         .search-btn:hover {
-            background-color: var(--primary);
+            background: var(--primary);
             color: #fff;
-            border: 1.5px solid var(--primary);
         }
         /* LTR/RTL layout */
         body.ltr, .ltr .container, .ltr .tab-content, .ltr .hadith-title, .ltr .hadith-content, .ltr .narrator-link {
@@ -230,6 +229,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
 </head>
 <body class="{% if lang == 'en' %}ltr{% else %}rtl{% endif %}">
     <!-- Modal for narrator details -->
@@ -239,46 +240,93 @@
             <div class="modal-header">
                 <div class="narrator-display">
                     <h2 id="narratorName">{% if lang == 'en' %}Narrator Info{% else %}معلومات الراوي{% endif %}</h2>
-                    <div id="narratorReliability" class="reliability-tag"></div>
                 </div>
             </div>
-            <div class="modal-tabs">
-                <div class="modal-tab active" data-tab="evaluation">{% if lang == 'en' %}Evaluation{% else %}جرح وتعديل{% endif %}</div>
-                <div class="modal-tab" data-tab="details">{% if lang == 'en' %}Details{% else %}تفاصيل{% endif %}</div>
-                <div class="modal-tab" data-tab="death">{% if lang == 'en' %}Death Record{% else %}سجل الوفاة{% endif %}</div>
+            {% if lang == 'ar' %}
+            <div class="modal-tabs" style="display: flex; border-bottom: 2px solid #e0e0e0;">
+                <div class="modal-tab active" data-tab="evaluation" style="flex:1; text-align:center; padding:10px; cursor:pointer; border-bottom: 2px solid var(--accent); background: #f9f9f9; font-weight:600;">جرح و تعديل</div>
+                <div class="modal-tab" data-tab="details" style="flex:1; text-align:center; padding:10px; cursor:pointer; background: #f9f9f9; font-weight:600;">شناسنامه در ثمانیه</div>
             </div>
             <div class="modal-body">
-                <div id="evaluationTab" class="modal-tab-content active">
+                <div id="evaluationTab" class="modal-tab-content active" style="padding: 18px 8px;">
                     <div id="narratorEvaluations"></div>
                 </div>
-                <div id="detailsTab" class="modal-tab-content">
+                <div id="detailsTab" class="modal-tab-content" style="padding: 18px 8px;">
                     <div class="narrator-info">
                         <div class="info-row">
-                            <div class="info-label">{% if lang == 'en' %}Name:{% else %}الاسم :{% endif %}</div>
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">الاسم :</div>
                             <div class="info-value" id="narratorFullName"></div>
                         </div>
                         <div class="info-row">
-                            <div class="info-label">{% if lang == 'en' %}Title:{% else %}لقب :{% endif %}</div>
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">لقب :</div>
                             <div class="info-value" id="narratorTitle"></div>
                         </div>
                         <div class="info-row">
-                            <div class="info-label">{% if lang == 'en' %}Kunya:{% else %}كنية :{% endif %}</div>
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">كنية :</div>
                             <div class="info-value" id="narratorKunya"></div>
                         </div>
                         <div class="info-row">
-                            <div class="info-label">{% if lang == 'en' %}Sect:{% else %}المذهب :{% endif %}</div>
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">المذهب :</div>
                             <div class="info-value" id="narratorSect"></div>
                         </div>
                         <div class="info-row">
-                            <div class="info-label">{% if lang == 'en' %}Reliability:{% else %}الوثاقة :{% endif %}</div>
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">الوثاقة :</div>
                             <div class="info-value" id="narratorReliabilityDetails"></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">طبقة في ثمانیه :</div>
+                            <div class="info-value" id="narratorTabaqa"></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">سجل الوفاة :</div>
+                            <div class="info-value" id="narratorDeathRecords"></div>
                         </div>
                     </div>
                 </div>
-                <div id="deathTab" class="modal-tab-content">
-                    <div id="narratorDeathRecords"></div>
+            </div>
+            {% else %}
+            <div class="modal-tabs" style="display: flex; border-bottom: 2px solid #e0e0e0;">
+                <div class="modal-tab active" data-tab="evaluation" style="flex:1; text-align:center; padding:10px; cursor:pointer; border-bottom: 2px solid var(--accent); background: #f9f9f9; font-weight:600;">Evaluation & Death Record</div>
+                <div class="modal-tab" data-tab="details" style="flex:1; text-align:center; padding:10px; cursor:pointer; background: #f9f9f9; font-weight:600;">Details & Tabaqa</div>
+            </div>
+            <div class="modal-body">
+                <div id="evaluationTab" class="modal-tab-content active" style="padding: 18px 8px;">
+                    <div id="narratorEvaluations"></div>
+                </div>
+                <div id="detailsTab" class="modal-tab-content" style="padding: 18px 8px;">
+                    <div class="narrator-info">
+                        <div class="info-row">
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">Name:</div>
+                            <div class="info-value" id="narratorFullName"></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">Title:</div>
+                            <div class="info-value" id="narratorTitle"></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">Kunya:</div>
+                            <div class="info-value" id="narratorKunya"></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">Sect:</div>
+                            <div class="info-value" id="narratorSect"></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">Reliability:</div>
+                            <div class="info-value" id="narratorReliabilityDetails"></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">Tabaqa:</div>
+                            <div class="info-value" id="narratorTabaqa"></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label" style="font-weight:700; color:var(--primary);">Death Record:</div>
+                            <div class="info-value" id="narratorDeathRecords"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 
@@ -287,7 +335,6 @@
         <div class="search-container">
             <form action="{{ url_for('search_hadith', lang=lang) }}" method="get" class="search-form">
                 <input type="text" name="hadith_id" placeholder="{% if lang == 'en' %}Enter hadith number to search...{% else %}ادخل رقم الحديث للبحث...{% endif %}">
-                <button type="submit" class="search-btn">{% if lang == 'en' %}Search{% else %}بحث{% endif %}</button>
             </form>
         </div>
         <div style="margin-right: 20px;">
@@ -307,13 +354,13 @@
                     {% for ref in reference_entries %}
                         <span class="reference-tab {% if ref.hadithId == hadith_id %}current-ref{% endif %}">
                             {{ ref.sourceMainTitle }} {% if lang == 'en' %}Vol{% else %}ج{% endif %}{{ ref.vol }} {% if lang == 'en' %}Pg{% else %}ص{% endif %}{{ ref.pageNum }}
-                            {% if ref.hadithId %}
+                    {% if ref.hadithId %}
                                 <a href="{{ url_for('show_hadith', hadith_id=ref.hadithId, lang=lang) }}" style="text-decoration:none;color:inherit;">
                                     <span style="cursor:pointer;">{% if lang == 'en' %}View{% else %}عرض{% endif %}</span>
-                                </a>
-                            {% else %}
+                    </a>
+                    {% else %}
                                 <span class="no-references" style="color:#888;">{% if lang == 'en' %}(Not available){% else %}(غير متوفر){% endif %}</span>
-                            {% endif %}
+                    {% endif %}
                         </span>
                     {% endfor %}
                 {% else %}
@@ -429,14 +476,10 @@
         // Attach click handlers to narrator links
         function attachNarratorLinkHandlers() {
             const narratorLinks = document.querySelectorAll('.narrator-link');
-            console.log(`Found ${narratorLinks.length} narrator links to attach handlers to`);
-            
             narratorLinks.forEach((link, index) => {
                 link.addEventListener('click', function(e) {
-                    console.log(`Narrator link clicked: ${this.textContent}`);
                     e.preventDefault();
                     const narratorId = this.getAttribute('data-narrator-id');
-                    console.log(`Fetching details for narrator ID: ${narratorId}`);
                     if (narratorId) {
                         fetchNarratorDetails(narratorId);
                     }
@@ -466,16 +509,56 @@
                     return response.json();
                 })
                 .then(data => {
-                    // Populate Evaluation tab
+                    // Populate Evaluation tab (heading first, then summary/source below, each on its own line)
                     let evaluationsHtml = '';
                     if (data.evaluations && data.evaluations.length > 0) {
-                        evaluationsHtml = data.evaluations.map(eval => {
-                            return `<div class="jarh-item">
-                                <div class="jarh-source">${TEXT.source} ${eval.source}</div>
-                                <div class="jarh-text">${eval.evaluation}</div>
-                                ${eval.summary ? `<div class="jarh-summary">${TEXT.summary} ${eval.summary}</div>` : ''}
+                        // Deduplicate summary if all are the same and not empty
+                        let allSummaries = data.evaluations.map(e => e.summary).filter(Boolean);
+                        let uniqueSummaries = Array.from(new Set(allSummaries));
+                        let showDedupSummary = false;
+                        let dedupSummary = '';
+                        if (uniqueSummaries.length === 1 && uniqueSummaries[0]) {
+                            showDedupSummary = true;
+                            dedupSummary = uniqueSummaries[0];
+                        }
+                        if(lang === 'ar') {
+                            if (showDedupSummary) {
+                                evaluationsHtml += `<div class='jarh-summary' style='font-weight:700; color:var(--primary); margin-bottom:6px;'>جمع بندي ارزيابي :</div><div style='margin-bottom:18px;'>${dedupSummary}</div>`;
+                            }
+                            evaluationsHtml += data.evaluations.map(eval => {
+                                let sourceHtml = '';
+                                if (eval.source && (eval.source.indexOf('|') !== -1 || eval.source.indexOf(',') !== -1)) {
+                                    sourceHtml = eval.source.split(/\||,/).map(s => `<div style='margin-bottom:2px;'>${s.trim()}</div>`).join('');
+                                } else {
+                                    sourceHtml = eval.source;
+                                }
+                                // Only show summary if not deduped
+                                let summaryHtml = (!showDedupSummary && eval.summary) ? `<div class='jarh-summary' style='margin-top:2px; color:#444;'>ملخص: ${eval.summary}</div>` : '';
+                                return `<div class='jarh-item' style='margin-bottom:18px;'>
+                                    <div class='jarh-text' style='font-weight:700; color:var(--primary); font-size:1.08rem;'>${eval.evaluation}</div>
+                                    ${summaryHtml}
+                                    <div class='jarh-source' style='margin-top:2px; color:#888;'>المصدر: ${sourceHtml}</div>
+                                </div>`;
+                            }).join('');
+                        } else {
+                            if (showDedupSummary) {
+                                evaluationsHtml += `<div class='jarh-summary' style='font-weight:700; color:var(--primary); margin-bottom:6px;'>Summary Grouped:</div><div style='margin-bottom:18px;'>${dedupSummary}</div>`;
+                            }
+                            evaluationsHtml += data.evaluations.map(eval => {
+                                let sourceHtml = '';
+                                if (eval.source && (eval.source.indexOf('|') !== -1 || eval.source.indexOf(',') !== -1)) {
+                                    sourceHtml = eval.source.split(/\||,/).map(s => `<div style='margin-bottom:2px;'>${s.trim()}</div>`).join('');
+                                } else {
+                                    sourceHtml = eval.source;
+                                }
+                                let summaryHtml = (!showDedupSummary && eval.summary) ? `<div class='jarh-summary' style='margin-top:2px; color:#444;'>Summary: ${eval.summary}</div>` : '';
+                                return `<div class='jarh-item' style='margin-bottom:18px;'>
+                                    <div class='jarh-text' style='font-weight:700; color:var(--primary); font-size:1.08rem;'>${eval.evaluation}</div>
+                                    ${summaryHtml}
+                                    <div class='jarh-source' style='margin-top:2px; color:#888;'>Source: ${sourceHtml}</div>
                             </div>`;
                         }).join('');
+                        }
                     } else {
                         evaluationsHtml = `<div class="jarh-item"><div class="jarh-text">${TEXT.noEvaluations}</div></div>`;
                     }
@@ -483,15 +566,38 @@
                     // Populate Details tab
                     const details = data.details || {};
                     document.getElementById('narratorFullName').textContent = details.name || '';
-                    document.getElementById('narratorTitle').textContent = details.titles || TEXT.notAvailable;
+                    // Populate Title (for both Arabic and English details tab)
+                    const titleVal = details.titles || TEXT.notAvailable;
+                    if (titleVal && titleVal !== TEXT.notAvailable && titleVal.indexOf('|') !== -1) {
+                        // Split by |, then format sources inside () with ' - '
+                        document.getElementById('narratorTitle').innerHTML = titleVal.split('|').map(s => {
+                            let match = s.match(/^(.*?)(\(.*\))$/);
+                            if (match) {
+                                // Format sources inside ()
+                                let sources = match[2].replace(/[()]/g, '').split(/,|،/).map(x => x.trim()).filter(Boolean).join(' - ');
+                                return `<div style='margin-bottom:2px;'>${match[1].trim()} ( ${sources} )</div>`;
+                            } else {
+                                return `<div style='margin-bottom:2px;'>${s.trim()}</div>`;
+                            }
+                        }).join('');
+                    } else {
+                        document.getElementById('narratorTitle').textContent = titleVal;
+                    }
                     document.getElementById('narratorKunya').textContent = details.patronymic || TEXT.notAvailable;
                     document.getElementById('narratorSect').textContent = details.sect || TEXT.notAvailable;
                     document.getElementById('narratorReliabilityDetails').textContent = details.reliability || TEXT.notAvailable;
-                    // Populate Death Record tab
+                    // Populate Tabaqa (for both Arabic and English details tab)
+                    const tabaqaVal = details.narrator_tabaqa || TEXT.notAvailable;
+                    if (tabaqaVal && tabaqaVal !== TEXT.notAvailable && tabaqaVal.indexOf('|') !== -1) {
+                        document.getElementById('narratorTabaqa').innerHTML = tabaqaVal.split('|').map(s => `<div style='margin-bottom:2px;'>${s.trim()}</div>`).join('');
+                    } else {
+                        document.getElementById('narratorTabaqa').textContent = tabaqaVal;
+                    }
+                    // Populate Death Record (now in details tab for both)
                     let deathHtml = '';
                     if (data.death_records && data.death_records.length > 0) {
                         deathHtml = data.death_records.map(record => {
-                            return `<div class="death-item">${record.death_year} (${TEXT.source} ${record.source})</div>`;
+                            return `<div class="death-item">${record.death_year} (${lang === 'en' ? 'Source:' : TEXT.source} ${record.source})</div>`;
                         }).join('');
                     } else {
                         deathHtml = `<div class="death-item">${TEXT.noDeath}</div>`;
@@ -502,7 +608,6 @@
                     document.body.style.overflow = "hidden";
                 })
                 .catch(error => {
-                    console.error('Error fetching narrator details:', error);
                     alert(TEXT.error);
                 });
         }
